@@ -25,3 +25,18 @@ profiles:
             artifactOverrides:
               image: rminz/skaffold-test
             chartPath: ci/charts/web
+            imageStrategy:
+              helm:
+                explicitRegistry: false
+    patches:
+      # Enable push when the the profile is activated
+      - op: replace
+        path: /build/local/push
+        value: true
+  - name: dev
+    activation:
+      - env: ENV=dev
+    deploy:
+      kubectl:
+        manifests:
+          - "ci/dev-manifest/*.yaml"
