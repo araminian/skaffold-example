@@ -33,6 +33,9 @@ profiles:
       - op: replace
         path: /build/local/push
         value: true
+      - op: replace
+        path: /build/tagPolicy/gitCommit/ignoreChanges
+        value: true
   - name: dev
     activation:
       - env: ENV=dev
