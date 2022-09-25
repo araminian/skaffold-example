@@ -1,0 +1,35 @@
+---
+apiVersion: skaffold/v2beta29
+kind: Config
+build:
+  platforms: ["linux/amd64"]
+  artifacts:
+    - image: rminz/skaffold-test
+      docker:
+        dockerfile: Dockerfile
+  tagPolicy:
+    gitCommit:
+      variant: AbbrevCommitSha
+      ignoreChanges: false
+  local:
+    concurrency: 2
+    push: false
+deploy:
+  helm:
+    releases:
+      - name: production
+        artifactOverrides:
+          image: rminz/skaffold-test
+        chartPath: ci/charts/web
+        imageStrategy:
+          helm:
+            explicitRegistry: false
+profiles:
+  - name: production
+    activation:
+      - env: CI=true
+    patches:
+      # Enable push when the the profile is activated
+      - op: replace
+        path: /build/local/push
+        value: true
