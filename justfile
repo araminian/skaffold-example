@@ -1,5 +1,8 @@
 set export
 
+init-hugo:
+  git submodule update --init
+
 build-pages:
   #!/usr/bin/env bash
   set -euxo pipefail
