@@ -1,7 +1,13 @@
 set export
 
-init-hugo:
+hugo-init:
   git submodule update --init
+
+hugo-server-start:
+  #!/usr/bin/env bash
+  set -euxo pipefail
+  cd website/cloud-guild
+  hugo server -D
 
 build-pages:
   #!/usr/bin/env bash
