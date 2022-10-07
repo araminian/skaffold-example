@@ -7,34 +7,27 @@ build:
       docker:
         dockerfile: Dockerfile
   tagPolicy:
-    gitCommit:
-      variant: AbbrevCommitSha
-      ignoreChanges: true
+    envTemplate:
+      template: "{{.GIT_REV}}"
   local:
-    concurrency: 2
     push: false
+    concurrency: 2
 deploy:
   helm:
     releases:
-      - name: app
-        artifactOverrides:
-          image: rminz/skaffold-test
+      - name: "{{.ENVIRONMENT}}"
+        setValueTemplates:
+          Environment: "{{.ENVIRONMENT}}"
+          image.tag: "{{.GIT_REV}}"
         chartPath: ci/charts/web
         valuesFiles:
           - ci/deployment-values/common.yaml
-        imageStrategy:
-          helm:
-            explicitRegistry: false
+          - ci/deployment-values/{{.ENVIRONMENT}}.yaml
 profiles:
-  - name: stage
+  - name: CI
+    activation:
+      - env: CI=true
     patches:
-      - op: add
-        path: /deploy/helm/releases/0/valuesFiles
-        value:
-          - ci/deployment-values/stage.yaml
-  - name: production
-    patches:
-      - op: add
-        path: /deploy/helm/releases/0/valuesFiles
-        value:
-          - ci/deployment-values/production.yaml
+      - op: replace
+        path: /build/local/push
+        value: true

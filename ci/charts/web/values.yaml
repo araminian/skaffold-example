@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: nginx
+  repository: rminz/skaffold-test
   pullPolicy: IfNotPresent
   tag: latest
 
