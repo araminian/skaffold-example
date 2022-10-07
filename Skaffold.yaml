@@ -20,6 +20,11 @@ build:
   local:
     concurrency: 2
     push: false
+test:
+  - context: .
+    image: rminz/skaffold-test
+    custom:
+      - command: grype $IMAGE
 deploy:
   kubectl:
     manifests:
