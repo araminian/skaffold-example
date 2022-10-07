@@ -20,32 +20,7 @@ build:
   local:
     concurrency: 2
     push: false
-profiles:
-  - name: production
-    activation:
-      - env: CI=true
-    deploy:
-      helm:
-        releases:
-          - name: production
-            artifactOverrides:
-              image: rminz/skaffold-test
-            chartPath: ci/charts/web
-            imageStrategy:
-              helm:
-                explicitRegistry: false
-    patches:
-      # Enable push when the the profile is activated
-      - op: replace
-        path: /build/local/push
-        value: true
-      - op: replace
-        path: /build/tagPolicy/gitCommit/ignoreChanges
-        value: true
-  - name: dev
-    activation:
-      - env: ENV=dev
-    deploy:
-      kubectl:
-        manifests:
-          - "ci/dev-manifest/*.yaml"
+deploy:
+  kubectl:
+    manifests:
+      - "ci/dev-manifest/*.yaml"
