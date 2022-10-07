@@ -48,6 +48,7 @@ Selector labels
 {{- define "web.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "web.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
+app.environment : {{ .Values.Environment }}
 {{- end }}
 
 {{/*
