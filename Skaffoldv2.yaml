@@ -1,0 +1,26 @@
+apiVersion: skaffold/v3
+kind: Config
+build:
+  artifacts:
+    - image: rminz/skaffold-test
+      docker:
+        dockerfile: Dockerfile
+  tagPolicy:
+    gitCommit:
+      variant: AbbrevCommitSha
+  platforms:
+    - linux/amd64
+  local:
+    push: false
+    concurrency: 2
+manifests:
+  rawYaml:
+    - ci/dev-manifest/*.yaml
+deploy:
+  kubectl: {}
+portForward:
+  - resourceType: deployment
+    resourceName: dev-web
+    namespace: default
+    port: 80
+    localPort: 8080
