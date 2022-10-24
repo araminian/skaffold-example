@@ -1,0 +1,39 @@
+apiVersion: skaffold/v3
+kind: Config
+build:
+  artifacts:
+    - image: rminz/skaffold-test
+      docker:
+        dockerfile: Dockerfile
+  tagPolicy:
+    gitCommit:
+      variant: AbbrevCommitSha
+      ignoreChanges: true
+  platforms:
+    - linux/amd64
+  local:
+    push: false
+    concurrency: 2
+manifests:
+  helm:
+    releases:
+      - name: app
+        chartPath: ci/charts/web
+        valuesFiles:
+          - ci/deployment-values/common.yaml
+        setValueTemplates:
+          image.repository: "{{.IMAGE_REPO}}"
+          image.tag: "{{.IMAGE_TAG}}"
+profiles:
+  - name: stage
+    patches:
+      - op: add
+        path: /manifests/helm/releases/0/valuesFiles
+        value:
+          - ci/deployment-values/stage.yaml
+  - name: production
+    patches:
+      - op: add
+        path: /manifests/helm/releases/0/valuesFiles
+        value:
+          - ci/deployment-values/production.yaml
