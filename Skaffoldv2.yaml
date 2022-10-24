@@ -1,0 +1,34 @@
+apiVersion: skaffold/v3
+kind: Config
+build:
+  artifacts:
+    - image: rminz/skaffold-test
+      docker:
+        dockerfile: Dockerfile
+  tagPolicy:
+    envTemplate:
+      template: "{{.GIT_REV}}"
+  platforms:
+    - linux/amd64
+  local:
+    push: false
+    concurrency: 2
+manifests:
+  helm:
+    releases:
+      - name: "{{.ENVIRONMENT}}"
+        chartPath: ci/charts/web
+        valuesFiles:
+          - ci/deployment-values/common.yaml
+          - ci/deployment-values/{{.ENVIRONMENT}}.yaml
+        setValueTemplates:
+          Environment: "{{.ENVIRONMENT}}"
+          image.tag: "{{.GIT_REV}}"
+profiles:
+  - name: CI
+    activation:
+      - env: CI=true
+    patches:
+      - op: replace
+        path: /build/local/push
+        value: true
