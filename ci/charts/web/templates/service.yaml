@@ -4,6 +4,7 @@ metadata:
   name: {{ include "web.fullname" . }}
   labels:
     {{- include "web.labels" . | nindent 4 }}
+  namespace: {{ .Values.Environment }}
 spec:
   type: {{ .Values.service.type }}
   ports:
