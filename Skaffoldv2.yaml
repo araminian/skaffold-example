@@ -9,8 +9,8 @@ build:
     gitCommit:
       variant: AbbrevCommitSha
       ignoreChanges: true
-  platforms:
-    - linux/amd64
+  #platforms:
+  #  - linux/amd64
   local:
     push: false
     concurrency: 2
